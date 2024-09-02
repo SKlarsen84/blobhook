@@ -1,6 +1,7 @@
-'use client' // Ensure this component is a client component
+'use client'; // Ensure this component is a client component
 
 import { useRouter } from 'next/navigation';
+import Image from 'next/image'; // Import the Image component
 import { v4 as uuidv4 } from 'uuid';
 
 export default function Home() {
@@ -13,7 +14,14 @@ export default function Home() {
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-center bg-gray-100 text-gray-800 p-24">
-      <div className="text-center">
+      <div className="flex flex-col items-center text-center"> {/* Ensure flex column and center alignment */}
+        <Image
+          src="/mascot.png" // Path to your mascot image
+          alt="Mascot"
+          width={200} // Adjust the width as needed
+          height={200} // Adjust the height as needed
+          className="mb-6" // Add margin-bottom for spacing
+        />
         <h1 className="text-4xl font-bold mb-6">Welcome to Webhook Monitor</h1>
         <p className="text-lg mb-8">
           Easily create and monitor webhooks in real-time. Click the button below to start your first webhook.

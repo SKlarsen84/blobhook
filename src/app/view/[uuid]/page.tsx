@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import Image from 'next/image'; // Import the Image component
 import pb from '../../../lib/pocketbase';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -115,7 +116,10 @@ const WebhookViewer = () => {
               </li>
             ))
           ) : (
-            <p className='text-gray-600'>No requests yet...</p>
+            <div className='flex flex-col items-center justify-center flex-1 text-center'> {/* Centering the mascot and text */}
+
+              <p className='text-gray-600 text-lg'>No requests yet...</p>
+            </div>
           )}
         </ul>
       </div>
@@ -171,10 +175,15 @@ const WebhookViewer = () => {
             </div>
           </div>
         ) : (
-          <div className='flex items-center justify-center flex-1'>
-            <p className='text-gray-500 text-lg'>
-              No requests to display yet! Once a request is made, it will show up here.
-            </p>
+          <div className='flex flex-col items-center justify-center flex-1 text-center'> {/* Centering the mascot and text */}
+            <Image
+              src="/mascot.png" // Path to your mascot image
+              alt="Mascot"
+              width={200} // Adjust the width as needed
+              height={200} // Adjust the height as needed
+              className="mb-6" // Add margin-bottom for spacing
+            />
+            <p className='text-gray-600 text-lg'>No requests yet... Once a request is made, it will show up here.</p>
           </div>
         )}
       </div>
