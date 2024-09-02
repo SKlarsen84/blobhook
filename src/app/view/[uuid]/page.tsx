@@ -160,8 +160,8 @@ const WebhookViewer = () => {
                   <Image
                     src="/copy.png" // Path to your copy icon image
                     alt="Copy Icon"
-                    width={30} // Adjust the width as needed
-                    height={30} // Adjust the height as needed
+                    width={22} // Adjust the width as needed
+                    height={22} // Adjust the height as needed
                     title='Copy URL'
                   />
                 </button>
@@ -175,8 +175,8 @@ const WebhookViewer = () => {
             <Image
               src="/refresh.png" // Path to your refresh icon image
               alt="Refresh Icon"
-              width={30} // Adjust the width as needed
-              height={30} // Adjust the height as needed
+              width={22} // Adjust the width as needed
+              height={22} // Adjust the height as needed
               title='Refresh UUID'
             />
           </button>
