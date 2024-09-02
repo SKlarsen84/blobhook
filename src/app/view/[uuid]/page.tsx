@@ -126,7 +126,7 @@ const WebhookViewer = () => {
       {/* Main Content */}
       <div className="flex-1 p-6 flex flex-col overflow-y-auto">
         {/* Top Bar */}
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 space-y-4 sm:space-y-0">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 space-y-4 sm:space-y-0 sm:space-x-2">
           <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-4 sm:space-y-0 sm:space-x-2 w-full">
             {webhookUrl && (
               <>
@@ -134,7 +134,7 @@ const WebhookViewer = () => {
                   type="text"
                   value={webhookUrl}
                   readOnly
-                  className="p-2 border border-gray-300 rounded-lg w-full sm:w-80 bg-gray-50 text-gray-800"
+                  className="p-2 border border-gray-300 rounded-lg w-full sm:w-full bg-gray-50 text-gray-800"
                 />
                 <button
                   onClick={handleCopyUrl}
