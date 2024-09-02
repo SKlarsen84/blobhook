@@ -1,89 +1,99 @@
-'use client' // Ensure this component is a client component
+'use client'; // Ensure this component is a client component
 
-import { useEffect, useState } from 'react'
-import { useRouter } from 'next/navigation'
-import pb from '../../../lib/pocketbase'
-import { v4 as uuidv4 } from 'uuid'
+import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import pb from '../../../lib/pocketbase';
+import { v4 as uuidv4 } from 'uuid';
 
 interface RequestData {
-  headers: any
-  body: any
-  method: string
-  timestamp: string
+  headers: any;
+  body: any;
+  method: string;
+  timestamp: string;
 }
 
 const WebhookViewer = () => {
-  const router = useRouter()
-  const [uuid, setUuid] = useState<string | null>(null)
-  const [requests, setRequests] = useState<RequestData[]>([])
-  const [selectedRequest, setSelectedRequest] = useState<RequestData | null>(null)
-  const [error, setError] = useState<string | null>(null)
+  const router = useRouter();
+  const [uuid, setUuid] = useState<string | null>(null);
+  const [requests, setRequests] = useState<RequestData[]>([]);
+  const [selectedRequest, setSelectedRequest] = useState<RequestData | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [webhookUrl, setWebhookUrl] = useState<string | null>(null);
 
   useEffect(() => {
-    const pathname = window.location.pathname
-    const uuidFromPath = pathname.split('/').pop()
+    const pathname = window.location.pathname;
+    const uuidFromPath = pathname.split('/').pop();
     if (uuidFromPath) {
-      setUuid(uuidFromPath)
+      setUuid(uuidFromPath);
+      setWebhookUrl(`${window.location.origin}/api/in/${uuidFromPath}`);
     }
-  }, [])
+  }, []);
 
   useEffect(() => {
-    if (!uuid) return
+    if (!uuid) return;
 
     const fetchData = async () => {
       try {
         const response = await pb.collection('requests').getFullList({
           filter: `uuid="${uuid}"`,
-          sort: '-timestamp'
-        })
-        setRequests(response as any as RequestData[])
+          sort: '-timestamp',
+        });
+        setRequests(response as any as RequestData[]);
         if (response.length > 0) {
-          setSelectedRequest(response[0] as any as RequestData)
+          setSelectedRequest(response[0] as any as RequestData);
         }
       } catch (err) {
-        setError('Failed to fetch requests')
-        console.error('Error fetching data:', err)
+        setError('Failed to fetch requests');
+        console.error('Error fetching data:', err);
       }
-    }
+    };
 
-    fetchData()
+    fetchData();
 
     // Subscribe to real-time updates
-    let unsubscribe: () => void = () => {}
+    let unsubscribe: () => void = () => {};
 
     const subscribeToUpdates = async () => {
       try {
-        const unsubscribeFunc = await pb.collection('requests').subscribe('*', e => {
+        const unsubscribeFunc = await pb.collection('requests').subscribe('*', (e) => {
           if (e.action === 'create' && e.record.uuid === uuid) {
-            setRequests(prev => [e.record as any as RequestData, ...prev])
-            setSelectedRequest(e.record as any as RequestData)
+            setRequests((prev) => [e.record as any as RequestData, ...prev]);
+            setSelectedRequest(e.record as any as RequestData);
           }
-        })
-        unsubscribe = unsubscribeFunc
+        });
+        unsubscribe = unsubscribeFunc;
       } catch (err) {
-        setError('Failed to subscribe to real-time updates')
-        console.error('Error subscribing to updates:', err)
+        setError('Failed to subscribe to real-time updates');
+        console.error('Error subscribing to updates:', err);
       }
-    }
+    };
 
-    subscribeToUpdates()
+    subscribeToUpdates();
 
     // Cleanup on component unmount
     return () => {
-      unsubscribe()
-    }
-  }, [uuid])
+      unsubscribe();
+    };
+  }, [uuid]);
 
   const handleCopyUrl = () => {
-    navigator.clipboard.writeText(`${window.location.origin}/api/in/${uuid}`)
-    alert('Webhook URL copied to clipboard!')
-  }
+    if (webhookUrl) {
+      navigator.clipboard.writeText(webhookUrl)
+        .then(() => {
+          alert('Webhook URL copied to clipboard!');
+        })
+        .catch((err) => {
+          console.error('Failed to copy text: ', err);
+        });
+    }
+  };
 
   const handleRefreshUuid = () => {
-    const newUuid = uuidv4()
-    setUuid(newUuid)
-    router.push(`/view/${newUuid}`)
-  }
+    const newUuid = uuidv4();
+    setUuid(newUuid);
+    setWebhookUrl(`${window.location.origin}/api/in/${newUuid}`);
+    router.push(`/view/${newUuid}`);
+  };
 
   return (
     <div className='flex h-screen bg-gray-100 text-gray-800'>
@@ -115,15 +125,19 @@ const WebhookViewer = () => {
         {/* Top Bar */}
         <div className='flex justify-between items-center mb-6'>
           <div className='flex items-center space-x-2'>
-            <input
-              type='text'
-              value={`${window.location.origin}/api/in/${uuid}`}
-              readOnly
-              className='p-2 border border-gray-400 rounded-lg w-96 bg-gray-100 text-gray-800'
-            />
-            <button onClick={handleCopyUrl} className='bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600'>
-              Copy URL
-            </button>
+            {webhookUrl && (
+              <>
+                <input
+                  type='text'
+                  value={webhookUrl}
+                  readOnly
+                  className='p-2 border border-gray-400 rounded-lg w-96 bg-gray-100 text-gray-800'
+                />
+                <button onClick={handleCopyUrl} className='bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600'>
+                  Copy URL
+                </button>
+              </>
+            )}
           </div>
           <button
             onClick={handleRefreshUuid}
@@ -165,7 +179,7 @@ const WebhookViewer = () => {
         )}
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default WebhookViewer
+export default WebhookViewer;

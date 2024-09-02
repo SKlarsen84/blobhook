@@ -1,6 +1,14 @@
 import PocketBase from 'pocketbase'
 
-// Replace with your PocketBase server URL
-const pb = new PocketBase('http://127.0.0.1:8090')
+const pb = new PocketBase(process.env.POCKETBASE_URL || process.env.NEXT_PUBLIC_POCKETBASE_URL)
+
+export async function authenticateAdmin() {
+  if (!pb.authStore.isValid) {
+    await pb.admins.authWithPassword(
+      process.env.POCKETBASE_ADMIN_EMAIL as string,
+      process.env.POCKETBASE_ADMIN_PASSWORD as string
+    )
+  }
+}
 
 export default pb

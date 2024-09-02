@@ -1,14 +1,17 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
-import pb from '../../../lib/pocketbase'
+import pb, { authenticateAdmin } from '../../../lib/pocketbase'
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   const { uuid } = req.query
+
+  console.log(process.env.POCKETBASE_URL)
 
   if (!uuid || Array.isArray(uuid)) {
     return res.status(400).json({ error: 'Invalid UUID' })
   }
 
   try {
+    await authenticateAdmin();
     // Log the request in PocketBase
     await pb.collection('requests').create({
       uuid: uuid,
