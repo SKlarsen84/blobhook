@@ -156,7 +156,6 @@ const WebhookViewer = () => {
         {/* Request Details */}
         {selectedRequest ? (
           <div className="bg-white p-6 rounded-lg shadow-md flex-1 overflow-y-auto">
-            <h3 className="text-2xl font-semibold mb-4">Request Details</h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <h4 className="text-lg font-medium">Details</h4>
@@ -172,7 +171,7 @@ const WebhookViewer = () => {
               <div>
                 <h4 className="text-lg font-medium">Request Headers</h4>
                 <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
-                  <pre className="text-sm">
+                  <pre className="text-xs">
                     {JSON.stringify(selectedRequest.headers, null, 2)}
                   </pre>
                 </div>
@@ -182,7 +181,7 @@ const WebhookViewer = () => {
             <div className="mt-6">
               <h4 className="text-lg font-medium">Request Body</h4>
               <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
-                <pre className="text-sm overflow-x-auto">
+                <pre className="text-xs overflow-x-auto">
                   {JSON.stringify(selectedRequest.body, null, 2)}
                 </pre>
               </div>
