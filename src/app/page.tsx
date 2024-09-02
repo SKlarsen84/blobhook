@@ -22,7 +22,7 @@ export default function Home() {
           height={200} // Adjust the height as needed
           className="mb-6" // Add margin-bottom for spacing
         />
-        <h1 className="text-4xl font-bold mb-6">Welcome to Webhook Monitor</h1>
+        <h1 className="text-4xl font-bold mb-6">Welcome to Blobhook!</h1>
         <p className="text-lg mb-8">
           Easily create and monitor webhooks in real-time. Click the button below to start your first webhook.
         </p>
