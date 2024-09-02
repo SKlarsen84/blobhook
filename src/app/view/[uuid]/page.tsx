@@ -98,19 +98,36 @@ const WebhookViewer = () => {
     router.push(`/view/${newUuid}`);
   };
 
+  const getMethodStyles = (method: string) => {
+    switch (method) {
+      case 'GET':
+        return 'bg-green-50 text-green-700 border-green-200';
+      case 'POST':
+        return 'bg-blue-50 text-blue-700 border-blue-200';
+      case 'PUT':
+        return 'bg-yellow-50 text-yellow-700 border-yellow-200';
+      case 'DELETE':
+        return 'bg-red-50 text-red-700 border-red-200';
+      case 'PATCH':
+        return 'bg-purple-50 text-purple-700 border-purple-200';
+      default:
+        return 'bg-gray-50 text-gray-700 border-gray-200';
+    }
+  };
+
   return (
     <div className="flex flex-col md:flex-row h-screen text-gray-800">
       {/* Sidebar */}
-      <div className="w-full md:w-1/5  bg-gray-100  border-b md:border-b-1 md:border-r border-gray-400 p-4 overflow-y-auto">
+      <div className="w-full md:w-1/5 bg-gray-100 border-b md:border-b-2 md:border-r border-gray-400 p-4 overflow-y-auto">
         <h2 className="text-lg font-semibold mb-4">Messages</h2>
-        <ul className="space-y-2 max-h-[6.5rem] md:max-h-none overflow-y-auto"> {/* Capped height for mobile */}
+        <ul className="space-y-2 max-h-[6.6rem] md:max-h-none overflow-y-auto">
           {requests.length > 0 ? (
             requests.map((req, index) => (
               <li
                 key={index}
                 onClick={() => setSelectedRequest(req)}
-                className={`p-3 rounded-lg cursor-pointer border ${
-                  selectedRequest === req ? 'bg-blue-50 border-blue-400' : 'bg-white border-gray-200'
+                className={`p-3 rounded-lg cursor-pointer m-1 border ${getMethodStyles(req.method)} ${
+                  selectedRequest === req ? 'ring-1 ring-black-100' : ''
                 }`}
               >
                 <p className="font-medium">{req.method}</p>
