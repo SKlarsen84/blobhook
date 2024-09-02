@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import Image from 'next/image'; // Import the Image component
+import Image from 'next/image';
 import pb from '../../../lib/pocketbase';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -155,18 +155,30 @@ const WebhookViewer = () => {
                 />
                 <button
                   onClick={handleCopyUrl}
-                  className="bg-blue-500 text-white px-1 py-1 rounded-lg hover:bg-blue-600 w-full sm:w-auto"
+                  className="bg-blue-500 text-white px-3 py-2 rounded-lg hover:bg-blue-600 w-full h-full sm:w-auto flex items-center justify-center"
                 >
-                  Copy URL
+                  <Image
+                    src="/copy.png" // Path to your copy icon image
+                    alt="Copy Icon"
+                    width={30} // Adjust the width as needed
+                    height={30} // Adjust the height as needed
+                    title='Copy URL'
+                  />
                 </button>
               </>
             )}
           </div>
           <button
             onClick={handleRefreshUuid}
-            className="bg-green-500 text-white px-1 py-1 rounded-lg hover:bg-green-600 w-full sm:w-auto"
+            className="bg-green-500 text-white px-3 py-2 rounded-lg hover:bg-green-600 w-full h-full sm:w-auto flex items-center justify-center"
           >
-            Refresh UUID
+            <Image
+              src="/refresh.png" // Path to your refresh icon image
+              alt="Refresh Icon"
+              width={30} // Adjust the width as needed
+              height={30} // Adjust the height as needed
+              title='Refresh UUID'
+            />
           </button>
         </div>
 
