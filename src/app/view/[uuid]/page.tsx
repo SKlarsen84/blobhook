@@ -99,9 +99,9 @@ const WebhookViewer = () => {
   };
 
   return (
-    <div className="flex flex-col md:flex-row h-screen bg-gray-100 text-gray-800">
+    <div className="flex flex-col md:flex-row h-screen text-gray-800">
       {/* Sidebar */}
-      <div className="w-full md:w-1/4 bg-white border-b md:border-b-0 md:border-r border-gray-300 p-4 overflow-y-auto">
+      <div className="w-full md:w-1/5  bg-gray-100  border-b md:border-b-1 md:border-r border-gray-400 p-4 overflow-y-auto">
         <h2 className="text-lg font-semibold mb-4">Messages</h2>
         <ul className="space-y-2 max-h-[6.5rem] md:max-h-none overflow-y-auto"> {/* Capped height for mobile */}
           {requests.length > 0 ? (

@@ -13,7 +13,7 @@ export default function Home() {
   };
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center bg-gray-100 text-gray-800 p-24">
+    <main className="flex min-h-screen flex-col items-center justify-center text-gray-800 p-24">
       <div className="flex flex-col items-center text-center"> {/* Ensure flex column and center alignment */}
         <Image
           src="/mascot.png" // Path to your mascot image
