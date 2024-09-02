@@ -106,7 +106,7 @@ const WebhookViewer = () => {
   }
 
   return (
-    <div className='flex flex-col md:flex-row h-screen text-gray-800'>
+    <div className='flex flex-col md:flex-row  min-h-[calc(100vh-7rem)]  text-gray-800'>
       {/* Sidebar */}
       <div className='w-full md:w-1/5 bg-gray-100 border-b md:border-b-2 md:border-r border-gray-400 p-4 overflow-y-auto'>
         <h2 className='text-lg font-semibold mb-4'>Messages</h2>
