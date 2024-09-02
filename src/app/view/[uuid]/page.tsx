@@ -138,7 +138,7 @@ const WebhookViewer = () => {
                 />
                 <button
                   onClick={handleCopyUrl}
-                  className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 w-full sm:w-auto"
+                  className="bg-blue-500 text-white px-1 py-1 rounded-lg hover:bg-blue-600 w-full sm:w-auto"
                 >
                   Copy URL
                 </button>
@@ -147,7 +147,7 @@ const WebhookViewer = () => {
           </div>
           <button
             onClick={handleRefreshUuid}
-            className="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 w-full sm:w-auto"
+            className="bg-green-500 text-white px-1 py-1 rounded-lg hover:bg-green-600 w-full sm:w-auto"
           >
             Refresh UUID
           </button>
