@@ -99,11 +99,11 @@ const WebhookViewer = () => {
   };
 
   return (
-    <div className="flex h-screen bg-gray-100 text-gray-800">
+    <div className="flex flex-col md:flex-row h-screen bg-gray-100 text-gray-800">
       {/* Sidebar */}
-      <div className="w-1/4 bg-white border-r border-gray-300 p-4 overflow-y-auto">
+      <div className="w-full md:w-1/4 bg-white border-b md:border-b-0 md:border-r border-gray-300 p-4 overflow-y-auto">
         <h2 className="text-lg font-semibold mb-4">Messages</h2>
-        <ul className="space-y-2">
+        <ul className="space-y-2 max-h-[6.5rem] md:max-h-none overflow-y-auto"> {/* Capped height for mobile */}
           {requests.length > 0 ? (
             requests.map((req, index) => (
               <li
@@ -124,21 +124,21 @@ const WebhookViewer = () => {
       </div>
 
       {/* Main Content */}
-      <div className="flex-1 p-6 flex flex-col">
+      <div className="flex-1 p-6 flex flex-col overflow-y-auto">
         {/* Top Bar */}
-        <div className="flex justify-between items-center mb-4">
-          <div className="flex items-center space-x-2">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 space-y-4 sm:space-y-0">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-4 sm:space-y-0 sm:space-x-2 w-full">
             {webhookUrl && (
               <>
                 <input
                   type="text"
                   value={webhookUrl}
                   readOnly
-                  className="p-2 border border-gray-300 rounded-lg w-80 bg-gray-50 text-gray-800"
+                  className="p-2 border border-gray-300 rounded-lg w-full sm:w-80 bg-gray-50 text-gray-800"
                 />
                 <button
                   onClick={handleCopyUrl}
-                  className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600"
+                  className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 w-full sm:w-auto"
                 >
                   Copy URL
                 </button>
@@ -147,7 +147,7 @@ const WebhookViewer = () => {
           </div>
           <button
             onClick={handleRefreshUuid}
-            className="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600"
+            className="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 w-full sm:w-auto"
           >
             Refresh UUID
           </button>
@@ -157,7 +157,7 @@ const WebhookViewer = () => {
         {selectedRequest ? (
           <div className="bg-white p-6 rounded-lg shadow-md flex-1 overflow-y-auto">
             <h3 className="text-2xl font-semibold mb-4">Request Details</h3>
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <h4 className="text-lg font-medium">Details</h4>
                 <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
