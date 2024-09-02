@@ -11,6 +11,8 @@ interface RequestData {
   body: any;
   method: string;
   timestamp: string;
+  ip?: string;
+  responseCode?: string;
 }
 
 const WebhookViewer = () => {
@@ -97,47 +99,47 @@ const WebhookViewer = () => {
   };
 
   return (
-    <div className='flex h-screen bg-gray-100 text-gray-800'>
+    <div className="flex h-screen bg-gray-100 text-gray-800">
       {/* Sidebar */}
-      <div className='w-1/4 bg-gray-200 p-4 overflow-y-auto'>
-        <h2 className='text-xl font-semibold mb-4'>Requests</h2>
-        <ul className='space-y-2'>
+      <div className="w-1/4 bg-white border-r border-gray-300 p-4 overflow-y-auto">
+        <h2 className="text-lg font-semibold mb-4">Messages</h2>
+        <ul className="space-y-2">
           {requests.length > 0 ? (
             requests.map((req, index) => (
               <li
                 key={index}
                 onClick={() => setSelectedRequest(req)}
-                className={`p-3 rounded-lg cursor-pointer ${
-                  selectedRequest === req ? 'bg-blue-300 text-white' : 'bg-white text-gray-800'
+                className={`p-3 rounded-lg cursor-pointer border ${
+                  selectedRequest === req ? 'bg-blue-50 border-blue-400' : 'bg-white border-gray-200'
                 }`}
               >
-                <p className='font-semibold'>{req.method}</p>
-                <p className='text-sm'>{new Date(req.timestamp).toLocaleString()}</p>
+                <p className="font-medium">{req.method}</p>
+                <p className="text-xs text-gray-500">{new Date(req.timestamp).toLocaleString()}</p>
               </li>
             ))
           ) : (
-            <div className='flex flex-col items-center justify-center flex-1 text-center'> {/* Centering the mascot and text */}
-
-              <p className='text-gray-600 text-lg'>No requests yet...</p>
-            </div>
+            <div className="text-center text-gray-600">No requests yet...</div>
           )}
         </ul>
       </div>
 
       {/* Main Content */}
-      <div className='w-3/4 p-6 flex flex-col'>
+      <div className="flex-1 p-6 flex flex-col">
         {/* Top Bar */}
-        <div className='flex justify-between items-center mb-6'>
-          <div className='flex items-center space-x-2'>
+        <div className="flex justify-between items-center mb-4">
+          <div className="flex items-center space-x-2">
             {webhookUrl && (
               <>
                 <input
-                  type='text'
+                  type="text"
                   value={webhookUrl}
                   readOnly
-                  className='p-2 border border-gray-400 rounded-lg w-96 bg-gray-100 text-gray-800'
+                  className="p-2 border border-gray-300 rounded-lg w-80 bg-gray-50 text-gray-800"
                 />
-                <button onClick={handleCopyUrl} className='bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600'>
+                <button
+                  onClick={handleCopyUrl}
+                  className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600"
+                >
                   Copy URL
                 </button>
               </>
@@ -145,7 +147,7 @@ const WebhookViewer = () => {
           </div>
           <button
             onClick={handleRefreshUuid}
-            className='bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600'
+            className="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600"
           >
             Refresh UUID
           </button>
@@ -153,37 +155,49 @@ const WebhookViewer = () => {
 
         {/* Request Details */}
         {selectedRequest ? (
-          <div className='bg-white p-6 rounded-lg shadow-md flex-1 overflow-y-auto text-gray-800'>
-            <h3 className='text-2xl font-semibold mb-4'>Request Details</h3>
-            <div className='mb-2'>
-              <strong>Method:</strong> {selectedRequest.method}
+          <div className="bg-white p-6 rounded-lg shadow-md flex-1 overflow-y-auto">
+            <h3 className="text-2xl font-semibold mb-4">Request Details</h3>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <h4 className="text-lg font-medium">Details</h4>
+                <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                  <div className="mb-2"><strong>URL:</strong> {webhookUrl}</div>
+                  <div className="mb-2"><strong>Method:</strong> {selectedRequest.method}</div>
+                  <div className="mb-2"><strong>Date:</strong> {new Date(selectedRequest.timestamp).toLocaleString()}</div>
+                  <div className="mb-2"><strong>IP:</strong> {selectedRequest.ip || 'N/A'}</div>
+                  <div><strong>Response Code:</strong> {selectedRequest.responseCode || 'N/A'}</div>
+                </div>
+              </div>
+
+              <div>
+                <h4 className="text-lg font-medium">Request Headers</h4>
+                <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                  <pre className="text-sm">
+                    {JSON.stringify(selectedRequest.headers, null, 2)}
+                  </pre>
+                </div>
+              </div>
             </div>
-            <div className='mb-2'>
-              <strong>Headers:</strong>
-              <pre className='bg-gray-100 p-2 mt-1 rounded-lg overflow-x-auto'>
-                {JSON.stringify(selectedRequest.headers, null, 2)}
-              </pre>
-            </div>
-            <div className='mb-2'>
-              <strong>Body:</strong>
-              <pre className='bg-gray-100 p-2 mt-1 rounded-lg overflow-x-auto'>
-                {JSON.stringify(selectedRequest.body, null, 2)}
-              </pre>
-            </div>
-            <div className='mb-2'>
-              <strong>Timestamp:</strong> {new Date(selectedRequest.timestamp).toLocaleString()}
+
+            <div className="mt-6">
+              <h4 className="text-lg font-medium">Request Body</h4>
+              <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                <pre className="text-sm overflow-x-auto">
+                  {JSON.stringify(selectedRequest.body, null, 2)}
+                </pre>
+              </div>
             </div>
           </div>
         ) : (
-          <div className='flex flex-col items-center justify-center flex-1 text-center'> {/* Centering the mascot and text */}
+          <div className="flex flex-col items-center justify-center flex-1 text-center">
             <Image
               src="/mascot.png" // Path to your mascot image
               alt="Mascot"
               width={200} // Adjust the width as needed
               height={200} // Adjust the height as needed
-              className="mb-6" // Add margin-bottom for spacing
+              className="mb-6"
             />
-            <p className='text-gray-600 text-lg'>No requests yet... Once a request is made, it will show up here.</p>
+            <p className="text-gray-600 text-lg">No requests yet... Once a request is made, it will show up here.</p>
           </div>
         )}
       </div>
