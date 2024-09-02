@@ -10,15 +10,15 @@ const Header = () => {
         <Link href="/">
           <div className="flex items-center cursor-pointer">
             <Image
-              src="/mascot.png" // Path to your mascot image
+              src="/mascot_notext.png" // Path to your mascot image
               alt="BlobHook Logo"
               width={40} // Adjust the width as needed
               height={40} // Adjust the height as needed
               className="mr-3"
             />
             <span className="text-2xl font-bold">
-              <span className="text-blue-400">Blob</span>
-              <span className="text-green-400">Hook</span>
+              <span className="text-white-400">Blob</span>
+              <span className="text-blue-400">Hook</span>
             </span>
           </div>
         </Link>
