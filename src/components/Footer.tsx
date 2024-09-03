@@ -10,7 +10,7 @@ const Footer = () => {
         <Link href='https://github.com/SKlarsen84/blobhook'>
           <div className='flex items-center cursor-pointer'>
             <span className='text-xs'>
-              <span className='text-white-400'>Made with ❤️ by Stefan Larsen</span>
+              <span className='text-white-400'>Made and open sourced with ❤️</span>
             </span>
           </div>
         </Link>
