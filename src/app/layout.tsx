@@ -8,7 +8,7 @@ const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
   title: 'BlobHook',
-  description: 'Free and open-source webhook testing tool',
+  description: 'Free and open-source webhook testing tool.Easily create, test and monitor webhooks in real-time. ',
 }
 
 export default function RootLayout({
