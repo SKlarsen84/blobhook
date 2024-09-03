@@ -9,63 +9,62 @@ interface AboutModalProps {
 export default function AboutModal({ isOpen, onClose }: AboutModalProps) {
   return (
     <Transition appear show={isOpen} as={Fragment}>
-      <Dialog as="div" className="relative z-10" onClose={onClose}>
+      <Dialog as='div' className='relative z-10' onClose={onClose}>
         <Transition.Child
           as={Fragment}
-          enter="ease-out duration-300"
-          enterFrom="opacity-0"
-          enterTo="opacity-100"
-          leave="ease-in duration-200"
-          leaveFrom="opacity-100"
-          leaveTo="opacity-0"
+          enter='ease-out duration-300'
+          enterFrom='opacity-0'
+          enterTo='opacity-100'
+          leave='ease-in duration-200'
+          leaveFrom='opacity-100'
+          leaveTo='opacity-0'
         >
-          <div className="fixed inset-0 bg-black bg-opacity-25" />
+          <div className='fixed inset-0 bg-black bg-opacity-25' />
         </Transition.Child>
 
-        <div className="fixed inset-0 overflow-y-auto">
-          <div className="flex min-h-full items-center justify-center p-4 text-center">
+        <div className='fixed inset-0 overflow-y-auto'>
+          <div className='flex min-h-full items-center justify-center p-4 text-center'>
             <Transition.Child
               as={Fragment}
-              enter="ease-out duration-300"
-              enterFrom="opacity-0 scale-95"
-              enterTo="opacity-100 scale-100"
-              leave="ease-in duration-200"
-              leaveFrom="opacity-100 scale-100"
-              leaveTo="opacity-0 scale-95"
+              enter='ease-out duration-300'
+              enterFrom='opacity-0 scale-95'
+              enterTo='opacity-100 scale-100'
+              leave='ease-in duration-200'
+              leaveFrom='opacity-100 scale-100'
+              leaveTo='opacity-0 scale-95'
             >
-              <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
-                <Dialog.Title
-                  as="h3"
-                  className="text-lg font-medium leading-6 text-gray-900"
-                >
+              <Dialog.Panel className='w-full max-w-md transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all'>
+                <Dialog.Title as='h3' className='text-lg font-medium leading-6 text-gray-900'>
                   About BlobHook
                 </Dialog.Title>
-                <div className="mt-2">
-                  <p className="text-sm text-gray-500">
-                    BlobHook is a powerful tool for managing and analyzing blob storage. It provides insights into your blob data and helps optimize storage usage.
+                <div className='mt-2'>
+                  <p className='text-sm text-gray-500'>
+                    BlobHook is a powerful tool for spinning up and testing webhook endpoints. It provides a simple and
+                    efficient way to create, manage, and test webhooks for your applications.
                   </p>
-                  <p className="text-sm text-gray-500 mt-2">
+                  <p className='text-sm text-gray-500 mt-2'>
                     <strong>Use BlobHook for:</strong>
-                    <ul className="list-disc list-inside mt-1">
-                      <li>Analyzing blob storage patterns</li>
-                      <li>Monitoring storage usage</li>
-                      <li>Optimizing data organization</li>
+                    <ul className='list-disc list-inside mt-1'>
+                      <li>Creating temporary webhook endpoints</li>
+                      <li>Testing webhook integrations</li>
+                      <li>Debugging webhook payloads</li>
+                      <li>Simulating webhook responses</li>
                     </ul>
                   </p>
-                  <p className="text-sm text-gray-500 mt-2">
+                  <p className='text-sm text-gray-500 mt-2'>
                     <strong>Do not use BlobHook for:</strong>
-                    <ul className="list-disc list-inside mt-1">
+                    <ul className='list-disc list-inside mt-1'>
+                      <li>Production-level webhook endpoints</li>
                       <li>Storing sensitive or personal information</li>
-                      <li>Modifying blob data directly</li>
-                      <li>As a replacement for proper backup solutions</li>
+                      <li>Long-term data storage</li>
                     </ul>
                   </p>
                 </div>
 
-                <div className="mt-4">
+                <div className='mt-4'>
                   <button
-                    type="button"
-                    className="inline-flex justify-center rounded-md border border-transparent bg-blue-100 px-4 py-2 text-sm font-medium text-blue-900 hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
+                    type='button'
+                    className='inline-flex justify-center rounded-md border border-transparent bg-blue-100 px-4 py-2 text-sm font-medium text-blue-900 hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2'
                     onClick={onClose}
                   >
                     Got it, thanks!
@@ -77,5 +76,5 @@ export default function AboutModal({ isOpen, onClose }: AboutModalProps) {
         </div>
       </Dialog>
     </Transition>
-  );
+  )
 }
