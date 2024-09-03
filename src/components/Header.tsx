@@ -8,8 +8,8 @@ export default function Header() {
   const [isAboutModalOpen, setIsAboutModalOpen] = useState(false)
 
   return (
-    <header className='bg-gray-800 text-white p-4'>
-      <div className='container mx-auto flex justify-between items-center'>
+    <header className='bg-gray-900 text-white p-4'>
+      <div className='container mx-auto flex items-center justify-between ml-0'>
         <Link href='/'>
           <div className='flex items-center cursor-pointer'>
             <Image
