@@ -345,7 +345,8 @@ const WebhookViewer = () => {
                
                     displayDataTypes={false}
                     name={false}
-                    collapsed={1}
+                    collapsed={false}
+                    
                     enableClipboard={false}
                     style={{ fontSize: '12px' }}
                   />
@@ -358,9 +359,9 @@ const WebhookViewer = () => {
                 {typeof selectedRequest.body === 'object' && selectedRequest.body !== null ? (
                   <ReactJson
                     src={selectedRequest.body}
-                    displayDataTypes={false}
+                    displayDataTypes={true}
                     name={false}
-                    collapsed={1}
+                    collapsed={false}
                     enableClipboard={false}
                     style={{ fontSize: '12px' }}
                   />
