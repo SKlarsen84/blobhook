@@ -15,9 +15,23 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig)
 const db = getFirestore(app)
-let messaging : Messaging | null = null
+let messaging: Messaging | null = null
 if (typeof window !== 'undefined' && 'serviceWorker' in navigator) {
-  messaging = getMessaging(app) 
+  messaging = getMessaging(app)
+
+  onMessage(messaging, payload => {
+    console.log('Message received. ', payload)
+    // Customize notification here
+    const notificationTitle = payload.notification?.title || 'Notification'
+    const notificationOptions = {
+      body: payload.notification?.body,
+      icon: 'https://www.blobhook.com/_next/image?url=%2Fmascot_notext.png&w=48&q=75'
+    }
+
+    if (Notification.permission === 'granted') {
+      new Notification(notificationTitle, notificationOptions)
+    }
+  })
 }
 
 export { db, collection, addDoc, query, where, getDocs, onSnapshot, deleteDoc, doc, getMessaging, onMessage, messaging }

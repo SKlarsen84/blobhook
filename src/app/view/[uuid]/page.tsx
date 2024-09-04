@@ -40,13 +40,27 @@ const WebhookViewer = () => {
 
 
 
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => {
-        console.log('Registering service worker')
-        navigator.serviceWorker.register('/firebase-messaging-sw.js')
+  useEffect(() => {
+    if (messaging) {
+      Notification.requestPermission().then(permission => {
+        if (permission === 'granted') {
+          console.log('Notification permission granted.')
+        } else {
+          console.log('Unable to get permission to notify.')
+        }
       })
-    }
 
+      // Register the service worker
+      navigator.serviceWorker
+        .register('/firebase-messaging-sw.js')
+        .then(registration => {
+          console.log('Service Worker registered with scope:', registration.scope)
+        })
+        .catch(error => {
+          console.error('Service Worker registration failed:', error)
+        })
+    }
+  }, [])
 
  useEffect(() => {
   console.log('FCM Token:', fcmToken)
