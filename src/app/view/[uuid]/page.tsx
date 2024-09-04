@@ -38,6 +38,8 @@ const WebhookViewer = () => {
   const [isSubscribed, setIsSubscribed] = useState<boolean>(false)
   const [fcmToken, setFcmToken] = useState<string | null>(null)
   const [isSubscribing, setIsSubscribing] = useState<boolean>(false)
+  const [isNotificationSupported, setIsNotificationSupported] = useState<boolean>(true)
+  const [isMobile, setIsMobile] = useState<boolean>(false)
 
   useEffect(() => {
     if (messaging) {
@@ -115,6 +117,23 @@ const WebhookViewer = () => {
     }
   }, [uuid])
 
+  useEffect(() => {
+    // Check if notifications are supported
+    if (!('Notification' in window) || !('serviceWorker' in navigator)) {
+      setIsNotificationSupported(false)
+    }
+
+    // Check if the device is mobile
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth <= 768) // Adjust this breakpoint as needed
+    }
+
+    checkMobile()
+    window.addEventListener('resize', checkMobile)
+
+    return () => window.removeEventListener('resize', checkMobile)
+  }, [])
+
   const handleCopyUrl = () => {
     if (webhookUrl) {
       navigator.clipboard
@@ -136,7 +155,7 @@ const WebhookViewer = () => {
   }
 
   const handleSubscriptionChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (!uuid) return
+    if (!uuid || !isNotificationSupported) return
 
     setIsSubscribing(true)
 
@@ -177,7 +196,7 @@ const WebhookViewer = () => {
       }
     }
 
-    setIsSubscribing(false) 
+    setIsSubscribing(false)
   }
 
   useEffect(() => {
@@ -239,35 +258,37 @@ const WebhookViewer = () => {
           <div className='flex flex-col sm:flex-row items-start sm:items-center space-y-4 sm:space-y-0 sm:space-x-2 w-full'>
             {webhookUrl && (
               <>
-                <div className='relative flex-grow'>
+                <div className='relative flex-grow w-full'>
                   <input
                     type='text'
                     value={webhookUrl}
                     readOnly
                     className='p-2 pr-10 border border-gray-300 rounded-lg w-full bg-gray-50 text-gray-800'
                   />
-                  <label
-                    className='absolute right-2 top-1/2 transform -translate-y-1/2 flex items-center space-x-1 cursor-pointer'
-                    title='Subscribe to notifications for this webhook'
-                  >
-                    {isSubscribing ? (
-                      <div className='animate-spin rounded-full h-4 w-4 border-b-2 border-gray-900'></div>
-                    ) : (
-                      <input
-                        type='checkbox'
-                        checked={isSubscribed}
-                        onChange={handleSubscriptionChange}
-                        className='form-checkbox h-4 w-4'
-                      />
-                    )}
-                    <span role='img' aria-label='bell' className='text-lg'>
-                      🔔
-                    </span>
-                  </label>
+                  {!isMobile && isNotificationSupported && (
+                    <label
+                      className='absolute right-2 top-1/2 transform -translate-y-1/2 flex items-center space-x-1 cursor-pointer'
+                      title='Subscribe to notifications for this webhook'
+                    >
+                      {isSubscribing ? (
+                        <div className='animate-spin rounded-full h-4 w-4 border-b-2 border-gray-900'></div>
+                      ) : (
+                        <input
+                          type='checkbox'
+                          checked={isSubscribed}
+                          onChange={handleSubscriptionChange}
+                          className='form-checkbox h-4 w-4'
+                        />
+                      )}
+                      <span role='img' aria-label='bell' className='text-lg'>
+                        🔔
+                      </span>
+                    </label>
+                  )}
                 </div>
                 <button
                   onClick={handleCopyUrl}
-                  className='bg-blue-500 text-white px-3 py-2 rounded-lg hover:bg-blue-600 w-full h-full sm:w-auto flex items-center justify-center'
+                  className='bg-blue-500 text-white px-3 py-2 rounded-lg hover:bg-blue-600 w-full sm:w-auto flex items-center justify-center'
                 >
                   <Image
                     src='/copy.png' // Path to your copy icon image
