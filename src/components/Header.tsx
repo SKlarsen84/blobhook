@@ -9,7 +9,7 @@ export default function Header() {
 
   return (
     <header className='bg-gray-900 text-white p-4'>
-      <div className='container mx-auto flex items-center justify-between ml-0'>
+      <div className='mx-auto flex items-center justify-between ml-0'>
         <Link href='/'>
           <div className='flex items-center cursor-pointer'>
             <Image
