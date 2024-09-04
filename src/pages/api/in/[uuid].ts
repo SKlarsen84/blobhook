@@ -1,6 +1,8 @@
 import { NextApiRequest, NextApiResponse } from 'next'
-import { db, collection, addDoc, query, where, getDocs } from '../../../lib/firebase'
-import admin from 'firebase-admin'
+
+import admin, { initializeApp } from 'firebase-admin'
+import { cert } from 'firebase-admin/app'
+import { getFirestore } from 'firebase-admin/firestore'
 
 if (!admin.apps.length) {
   admin.initializeApp({
@@ -12,6 +14,17 @@ if (!admin.apps.length) {
   })
 }
 
+// Initialize Firebase Admin SDK
+const app = initializeApp({
+  credential: cert({
+    projectId: process.env.FIREBASE_PROJECT_ID,
+    privateKey: process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, '\n'),
+    clientEmail: process.env.FIREBASE_CLIENT_EMAIL
+  })
+})
+
+const db = getFirestore(app)
+
 const messaging = admin.messaging()
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
@@ -22,8 +35,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   }
 
   try {
-    // Save the request to the database
-    await addDoc(collection(db, 'requests'), {
+    await db.collection('requests').add({
       uuid,
       headers: req.headers,
       body: req.body,
@@ -33,9 +45,9 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       responseCode: res.statusCode
     })
 
-    // Fetch subscriptions
-    const subscriptionQuery = query(collection(db, 'subscriptions'), where('uuid', '==', uuid))
-    const subscriptionSnapshot = await getDocs(subscriptionQuery)
+/*     //get all subscriptions from the subscriptions collection for this uuid.
+    const subscriptionSnapshot = await db.collection('subscriptions').where('uuid', '==', uuid).get()
+    const subscriptions = subscriptionSnapshot.docs.map(doc => doc.data())
 
     // Send push notifications to subscribed users
     if (!subscriptionSnapshot.empty) {
@@ -44,13 +56,12 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         notification: {
           title: 'New Webhook Request',
           body: `A new request was made to webhook ${uuid}`
-          
         },
         tokens
       }
 
       await messaging.sendEachForMulticast(message)
-    }
+    } */
 
     res.status(200).json({ message: 'Request received' })
   } catch (error) {
