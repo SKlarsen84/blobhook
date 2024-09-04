@@ -1,43 +1,61 @@
-import type { NextApiRequest, NextApiResponse } from 'next'
-import { initializeApp, cert } from 'firebase-admin/app'
-import { getFirestore } from 'firebase-admin/firestore'
+import { NextApiRequest, NextApiResponse } from 'next'
+import { db, collection, addDoc, query, where, getDocs } from '../../../lib/firebase'
+import admin from 'firebase-admin'
 
-if (!process.env.FIREBASE_PROJECT_ID || !process.env.FIREBASE_PRIVATE_KEY || !process.env.FIREBASE_CLIENT_EMAIL) {
-  throw new Error('Missing Firebase environment variables')
+if (!admin.apps.length) {
+  admin.initializeApp({
+    credential: admin.credential.cert({
+      projectId: process.env.FIREBASE_PROJECT_ID,
+      privateKey: process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, '\n'),
+      clientEmail: process.env.FIREBASE_CLIENT_EMAIL
+    })
+  })
 }
 
-// Initialize Firebase Admin SDK
-const app = initializeApp({
-  credential: cert({
-    projectId: process.env.FIREBASE_PROJECT_ID,
-    privateKey: process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, '\n'),
-    clientEmail: process.env.FIREBASE_CLIENT_EMAIL
-  })
-})
+const messaging = admin.messaging()
 
-const db = getFirestore(app)
-
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const { uuid } = req.query
 
-  if (!uuid || Array.isArray(uuid)) {
+  if (!uuid || typeof uuid !== 'string') {
     return res.status(400).json({ error: 'Invalid UUID' })
   }
 
   try {
-    // Log the request in Firestore
-    await db.collection('requests').add({
-      uuid: uuid,
-      webhook_url: uuid,
-      method: req.method,
+    // Save the request to the database
+    await addDoc(collection(db, 'requests'), {
+      uuid,
       headers: req.headers,
       body: req.body,
-      timestamp: new Date().toISOString()
+      method: req.method,
+      timestamp: new Date().toISOString(),
+      ip: req.headers['x-forwarded-for'] || req.connection.remoteAddress,
+      responseCode: res.statusCode
     })
 
-    res.status(200).json({ message: 'Request logged successfully' })
+    // Fetch subscriptions
+    const subscriptionQuery = query(collection(db, 'subscriptions'), where('uuid', '==', uuid))
+    const subscriptionSnapshot = await getDocs(subscriptionQuery)
+
+    // Send push notifications to subscribed users
+    if (!subscriptionSnapshot.empty) {
+      const tokens = subscriptionSnapshot.docs.map(doc => doc.data().token)
+      const message = {
+        notification: {
+          title: 'New Webhook Request',
+          body: `A new request was made to webhook ${uuid}`
+        },
+        tokens
+      }
+
+      await messaging.sendEachForMulticast(message)
+    }
+
+    res.status(200).json({ message: 'Request received' })
   } catch (error) {
-    console.error('Error logging request:', error)
-    res.status(500).json({ error: 'Failed to log request' })
+    console.error('Error saving request:', error)
+    res.status(500).json({ error: 'Internal Server Error' })
   }
 }
+
+export default handler

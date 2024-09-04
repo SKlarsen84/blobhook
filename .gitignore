@@ -5,6 +5,7 @@
 /.pnp
 .pnp.js
 .yarn/install-state.gz
+./generate-vapid-keys.js
 
 # testing
 /coverage

@@ -3,7 +3,19 @@
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Image from 'next/image'
-import { db, collection, query, where, getDocs, onSnapshot } from '../../../lib/firebase'
+import {
+  db,
+  collection,
+  query,
+  where,
+  getDocs,
+  onSnapshot,
+  addDoc,
+  deleteDoc,
+  doc,
+  messaging
+} from '../../../lib/firebase'
+import { getToken } from 'firebase/messaging'
 import { v4 as uuidv4 } from 'uuid'
 
 interface RequestData {
@@ -22,6 +34,8 @@ const WebhookViewer = () => {
   const [selectedRequest, setSelectedRequest] = useState<RequestData | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [webhookUrl, setWebhookUrl] = useState<string | null>(null)
+  const [isSubscribed, setIsSubscribed] = useState<boolean>(false)
+  const [fcmToken, setFcmToken] = useState<string | null>(null)
 
   useEffect(() => {
     const pathname = window.location.pathname
@@ -62,6 +76,15 @@ const WebhookViewer = () => {
       }
     })
 
+    // Check subscription status
+    const checkSubscription = async () => {
+      const subscriptionQuery = query(collection(db, 'subscriptions'), where('uuid', '==', uuid))
+      const subscriptionSnapshot = await getDocs(subscriptionQuery)
+      setIsSubscribed(!subscriptionSnapshot.empty)
+    }
+
+    checkSubscription()
+
     // Cleanup on component unmount
     return () => {
       unsubscribe()
@@ -86,6 +109,43 @@ const WebhookViewer = () => {
     setUuid(newUuid)
     setWebhookUrl(`${window.location.origin}/api/in/${newUuid}`)
     router.push(`/view/${newUuid}`)
+  }
+
+  const handleSubscriptionChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!uuid) return
+
+    if (e.target.checked) {
+      // Request notification permission
+      if (Notification.permission !== 'granted') {
+        const permission = await Notification.requestPermission()
+        if (permission !== 'granted') {
+          alert('Notification permission denied')
+          return
+        }
+      }
+
+      // Get FCM token
+      try {
+        const token = await getToken(messaging, { vapidKey: process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY })
+        setFcmToken(token)
+        await addDoc(collection(db, 'subscriptions'), { uuid, token })
+        setIsSubscribed(true)
+      } catch (err) {
+        console.error('Failed to subscribe:', err)
+      }
+    } else {
+      // Unsubscribe
+      try {
+        const subscriptionQuery = query(collection(db, 'subscriptions'), where('uuid', '==', uuid))
+        const subscriptionSnapshot = await getDocs(subscriptionQuery)
+        subscriptionSnapshot.forEach(async doc => {
+          await deleteDoc(doc.ref)
+        })
+        setIsSubscribed(false)
+      } catch (err) {
+        console.error('Failed to unsubscribe:', err)
+      }
+    }
   }
 
   const getMethodStyles = (method: string) => {
@@ -170,6 +230,19 @@ const WebhookViewer = () => {
               title='Refresh UUID'
             />
           </button>
+        </div>
+
+        {/* Subscription Checkbox */}
+        <div className='mb-4'>
+          <label className='flex items-center space-x-2'>
+            <input
+              type='checkbox'
+              checked={isSubscribed}
+              onChange={handleSubscriptionChange}
+              className='form-checkbox'
+            />
+            <span>Subscribe to notifications</span>
+          </label>
         </div>
 
         {/* Request Details */}
