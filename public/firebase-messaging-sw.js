@@ -20,7 +20,7 @@ messaging.onBackgroundMessage((payload) => {
   const notificationOptions = {
     body: payload.notification.body,
     icon: 'https://www.blobhook.com/_next/image?url=%2Fnotification.png&w=32&q=75',
-    data: { url: `https://blobhook.com/view/${payload.notification.body.uuid}` }
+    data: { url: `https://blobhook.com/view/${payload.notification.uuid}` }
   };
 
   self.registration.showNotification(notificationTitle, notificationOptions);
