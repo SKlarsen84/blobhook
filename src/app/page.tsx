@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation'
 import Image from 'next/image' // Import the Image component
 import { v4 as uuidv4 } from 'uuid'
 import { useEffect } from 'react'
+import { messaging } from '@/lib/firebase'
 
 export default function Home() {
   useEffect(() => {
