@@ -20,15 +20,7 @@ messaging.onBackgroundMessage((payload) => {
   const notificationOptions = {
     body: payload.notification.body,
     icon: 'https://www.blobhook.com/_next/image?url=%2Fnotification.png&w=32&q=75',
-    data: { url: `https://blobhook.com/view/${payload.notification.body.uuid}` }
   };
 
   self.registration.showNotification(notificationTitle, notificationOptions);
-});
-
-self.addEventListener('notificationclick', function(event) {
-  event.notification.close();
-  event.waitUntil(
-    clients.openWindow(event.notification.data.url)
-  );
 });
