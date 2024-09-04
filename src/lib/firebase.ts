@@ -17,7 +17,6 @@ const app = initializeApp(firebaseConfig)
 const db = getFirestore(app)
 let messaging : Messaging | null = null
 if (typeof window !== 'undefined' && 'serviceWorker' in navigator) {
-  console.log("messaging is initialized")
   messaging = getMessaging(app) 
 }
 
