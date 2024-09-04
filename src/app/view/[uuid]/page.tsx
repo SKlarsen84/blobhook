@@ -37,6 +37,7 @@ const WebhookViewer = () => {
   const [webhookUrl, setWebhookUrl] = useState<string | null>(null)
   const [isSubscribed, setIsSubscribed] = useState<boolean>(false)
   const [fcmToken, setFcmToken] = useState<string | null>(null)
+  const [isSubscribing, setIsSubscribing] = useState<boolean>(false)
 
 
 
@@ -62,9 +63,7 @@ const WebhookViewer = () => {
     }
   }, [])
 
- useEffect(() => {
-  console.log('FCM Token:', fcmToken)
- }, [fcmToken])
+
   useEffect(() => {
     const pathname = window.location.pathname
     const uuidFromPath = pathname.split('/').pop()
@@ -146,6 +145,8 @@ const WebhookViewer = () => {
   const handleSubscriptionChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!uuid) return
 
+    setIsSubscribing(true)
+
     if (e.target.checked) {
       // Request notification permission
       if (Notification.permission !== 'granted') {
@@ -183,6 +184,8 @@ const WebhookViewer = () => {
         console.error('Failed to unsubscribe:', err)
       }
     }
+
+    setIsSubscribing(false)
   }
 
   const getMethodStyles = (method: string) => {
@@ -243,12 +246,16 @@ const WebhookViewer = () => {
                   />
                   <label className='absolute right-2 top-1/2 transform -translate-y-1/2 flex items-center space-x-1 cursor-pointer'
                   title='Subscribe to notifications for this webhook'>
-                    <input
-                      type='checkbox'
-                      checked={isSubscribed}
-                      onChange={handleSubscriptionChange}
-                      className='form-checkbox h-4 w-4'
-                    />
+                    {isSubscribing ? (
+                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-gray-900"></div>
+                    ) : (
+                      <input
+                        type='checkbox'
+                        checked={isSubscribed}
+                        onChange={handleSubscriptionChange}
+                        className='form-checkbox h-4 w-4'
+                      />
+                    )}
                     <span role="img" aria-label="bell" className='text-lg'>🔔</span>
                   </label>
                 </div>
