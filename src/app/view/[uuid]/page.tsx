@@ -41,14 +41,6 @@ const WebhookViewer = () => {
 
   useEffect(() => {
     if (messaging) {
-      Notification.requestPermission().then(permission => {
-        if (permission === 'granted') {
-          console.log('Notification permission granted.')
-        } else {
-          console.log('Unable to get permission to notify.')
-        }
-      })
-
       // Register the service worker
       navigator.serviceWorker
         .register('/firebase-messaging-sw.js')
@@ -149,13 +141,12 @@ const WebhookViewer = () => {
     setIsSubscribing(true)
 
     if (e.target.checked) {
-      // Request notification permission
-      if (Notification.permission !== 'granted') {
-        const permission = await Notification.requestPermission()
-        if (permission !== 'granted') {
-          alert('Notification permission denied')
-          return
-        }
+      // Request notification permission only when subscribing
+      const permission = await Notification.requestPermission()
+      if (permission !== 'granted') {
+        alert('Notification permission denied')
+        setIsSubscribing(false)
+        return
       }
 
       // Get FCM token
