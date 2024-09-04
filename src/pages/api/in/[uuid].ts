@@ -36,8 +36,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       const message = {
         notification: {
           title: 'New Webhook Request',
-          body: `A new request was made to webhook ${uuid}`,
-          uuid: uuid
+          body: uuid,
         },
         webpush: {
           headers: {
