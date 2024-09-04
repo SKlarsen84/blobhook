@@ -17,7 +17,7 @@ import {
 } from '../../../lib/firebase'
 import { getToken } from 'firebase/messaging'
 import { v4 as uuidv4 } from 'uuid'
-
+import ReactJson from 'react-json-view'
 
 interface RequestData {
   headers: any
@@ -38,8 +38,6 @@ const WebhookViewer = () => {
   const [isSubscribed, setIsSubscribed] = useState<boolean>(false)
   const [fcmToken, setFcmToken] = useState<string | null>(null)
   const [isSubscribing, setIsSubscribing] = useState<boolean>(false)
-
-
 
   useEffect(() => {
     if (messaging) {
@@ -63,7 +61,6 @@ const WebhookViewer = () => {
     }
   }, [])
 
-
   useEffect(() => {
     const pathname = window.location.pathname
     const uuidFromPath = pathname.split('/').pop()
@@ -82,7 +79,9 @@ const WebhookViewer = () => {
         const querySnapshot = await getDocs(q)
         const requestsData = querySnapshot.docs.map(doc => doc.data() as RequestData)
         // Sort requests by timestamp in descending order
-        const sortedRequests = requestsData.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())
+        const sortedRequests = requestsData.sort(
+          (a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
+        )
         setRequests(sortedRequests)
         if (sortedRequests.length > 0) {
           setSelectedRequest(sortedRequests[0])
@@ -100,7 +99,9 @@ const WebhookViewer = () => {
     const unsubscribe = onSnapshot(q, snapshot => {
       const newRequests = snapshot.docs.map(doc => doc.data() as RequestData)
       // Sort new requests by timestamp in descending order
-      const sortedNewRequests = newRequests.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())
+      const sortedNewRequests = newRequests.sort(
+        (a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
+      )
       setRequests(sortedNewRequests)
       if (sortedNewRequests.length > 0) {
         setSelectedRequest(sortedNewRequests[0])
@@ -185,8 +186,18 @@ const WebhookViewer = () => {
       }
     }
 
-    setIsSubscribing(false)
+    setIsSubscribing(false) 
   }
+
+  useEffect(() => {
+    if (selectedRequest) {
+      const { 'x-vercel-sc-headers': _, 'forwarded': __, ...headersWithoutVercelScHeaders } = selectedRequest.headers;
+      setSelectedRequest(prev => prev ? {
+        ...prev,
+        headers: headersWithoutVercelScHeaders
+      } : null);
+    }
+  }, [selectedRequest]);
 
   const getMethodStyles = (method: string) => {
     switch (method) {
@@ -244,10 +255,12 @@ const WebhookViewer = () => {
                     readOnly
                     className='p-2 pr-10 border border-gray-300 rounded-lg w-full bg-gray-50 text-gray-800'
                   />
-                  <label className='absolute right-2 top-1/2 transform -translate-y-1/2 flex items-center space-x-1 cursor-pointer'
-                  title='Subscribe to notifications for this webhook'>
+                  <label
+                    className='absolute right-2 top-1/2 transform -translate-y-1/2 flex items-center space-x-1 cursor-pointer'
+                    title='Subscribe to notifications for this webhook'
+                  >
                     {isSubscribing ? (
-                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-gray-900"></div>
+                      <div className='animate-spin rounded-full h-4 w-4 border-b-2 border-gray-900'></div>
                     ) : (
                       <input
                         type='checkbox'
@@ -256,7 +269,9 @@ const WebhookViewer = () => {
                         className='form-checkbox h-4 w-4'
                       />
                     )}
-                    <span role="img" aria-label="bell" className='text-lg'>🔔</span>
+                    <span role='img' aria-label='bell' className='text-lg'>
+                      🔔
+                    </span>
                   </label>
                 </div>
                 <button
@@ -291,13 +306,10 @@ const WebhookViewer = () => {
         {/* Request Details */}
         {selectedRequest ? (
           <div className='bg-white p-6 rounded-lg shadow-md flex-1 overflow-y-auto'>
-            <div className='grid grid-cols-1 sm:grid-cols-2 gap-4'>
-              <div>
+            <div className='flex gap-4'>
+              <div className='w-1/4'>
                 <h4 className='text-lg font-medium'>Details</h4>
                 <div className='bg-gray-50 p-4 rounded-lg border border-gray-200'>
-                  <div className='mb-2'>
-                    <strong>URL:</strong> {webhookUrl}
-                  </div>
                   <div className='mb-2'>
                     <strong>Method:</strong> {selectedRequest.method}
                   </div>
@@ -305,26 +317,44 @@ const WebhookViewer = () => {
                     <strong>Date:</strong> {new Date(selectedRequest.timestamp).toLocaleString()}
                   </div>
                   <div className='mb-2'>
-                    <strong>IP:</strong> {selectedRequest.ip || 'N/A'}
-                  </div>
-                  <div>
-                    <strong>Response Code:</strong> {selectedRequest.responseCode || 'N/A'}
+                    <strong>IP:</strong> {selectedRequest.headers['x-vercel-proxied-for'] || 'N/A'}
                   </div>
                 </div>
               </div>
 
-              <div>
+              <div className='w-3/4'>
                 <h4 className='text-lg font-medium'>Request Headers</h4>
-                <div className='bg-gray-50 p-4 rounded-lg border border-gray-200'>
-                  <pre className='text-xs'>{JSON.stringify(selectedRequest.headers, null, 2)}</pre>
+                <div
+                  className='bg-gray-50 p-4 rounded-lg border border-gray-200 overflow-y-auto'
+                  style={{ height: '244px' }}
+                >
+                  <ReactJson
+                    src={selectedRequest.headers}
+               
+                    displayDataTypes={false}
+                    name={false}
+                    collapsed={1}
+                    enableClipboard={false}
+                    style={{ fontSize: '12px' }}
+                  />
                 </div>
               </div>
             </div>
-
             <div className='mt-6'>
               <h4 className='text-lg font-medium'>Request Body</h4>
               <div className='bg-gray-50 p-4 rounded-lg border border-gray-200'>
-                <pre className='text-xs overflow-x-auto'>{JSON.stringify(selectedRequest.body, null, 2)}</pre>
+                {typeof selectedRequest.body === 'object' && selectedRequest.body !== null ? (
+                  <ReactJson
+                    src={selectedRequest.body}
+                    displayDataTypes={false}
+                    name={false}
+                    collapsed={1}
+                    enableClipboard={false}
+                    style={{ fontSize: '12px' }}
+                  />
+                ) : (
+                  <pre className='text-xs whitespace-pre-wrap'>{String(selectedRequest.body)}</pre>
+                )}
               </div>
             </div>
           </div>
