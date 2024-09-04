@@ -82,9 +82,11 @@ const WebhookViewer = () => {
         const q = query(collection(db, 'requests'), where('uuid', '==', uuid))
         const querySnapshot = await getDocs(q)
         const requestsData = querySnapshot.docs.map(doc => doc.data() as RequestData)
-        setRequests(requestsData)
-        if (requestsData.length > 0) {
-          setSelectedRequest(requestsData[0])
+        // Sort requests by timestamp in descending order
+        const sortedRequests = requestsData.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())
+        setRequests(sortedRequests)
+        if (sortedRequests.length > 0) {
+          setSelectedRequest(sortedRequests[0])
         }
       } catch (err) {
         setError('Failed to fetch requests')
@@ -98,9 +100,11 @@ const WebhookViewer = () => {
     const q = query(collection(db, 'requests'), where('uuid', '==', uuid))
     const unsubscribe = onSnapshot(q, snapshot => {
       const newRequests = snapshot.docs.map(doc => doc.data() as RequestData)
-      setRequests(newRequests)
-      if (newRequests.length > 0) {
-        setSelectedRequest(newRequests[0])
+      // Sort new requests by timestamp in descending order
+      const sortedNewRequests = newRequests.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())
+      setRequests(sortedNewRequests)
+      if (sortedNewRequests.length > 0) {
+        setSelectedRequest(sortedNewRequests[0])
       }
     })
 
@@ -230,12 +234,24 @@ const WebhookViewer = () => {
           <div className='flex flex-col sm:flex-row items-start sm:items-center space-y-4 sm:space-y-0 sm:space-x-2 w-full'>
             {webhookUrl && (
               <>
-                <input
-                  type='text'
-                  value={webhookUrl}
-                  readOnly
-                  className='p-2 border border-gray-300 rounded-lg w-full sm:w-full bg-gray-50 text-gray-800'
-                />
+                <div className='relative flex-grow'>
+                  <input
+                    type='text'
+                    value={webhookUrl}
+                    readOnly
+                    className='p-2 pr-10 border border-gray-300 rounded-lg w-full bg-gray-50 text-gray-800'
+                  />
+                  <label className='absolute right-2 top-1/2 transform -translate-y-1/2 flex items-center space-x-1 cursor-pointer'
+                  title='Subscribe to notifications for this webhook'>
+                    <input
+                      type='checkbox'
+                      checked={isSubscribed}
+                      onChange={handleSubscriptionChange}
+                      className='form-checkbox h-4 w-4'
+                    />
+                    <span role="img" aria-label="bell" className='text-lg'>🔔</span>
+                  </label>
+                </div>
                 <button
                   onClick={handleCopyUrl}
                   className='bg-blue-500 text-white px-3 py-2 rounded-lg hover:bg-blue-600 w-full h-full sm:w-auto flex items-center justify-center'
@@ -263,19 +279,6 @@ const WebhookViewer = () => {
               title='Refresh UUID'
             />
           </button>
-        </div>
-
-        {/* Subscription Checkbox */}
-        <div className='mb-4'>
-          <label className='flex items-center space-x-2'>
-            <input
-              type='checkbox'
-              checked={isSubscribed}
-              onChange={handleSubscriptionChange}
-              className='form-checkbox'
-            />
-            <span>Subscribe to notifications</span>
-          </label>
         </div>
 
         {/* Request Details */}
