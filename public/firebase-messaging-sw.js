@@ -1,5 +1,5 @@
-importScripts('https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js')
-importScripts('https://www.gstatic.com/firebasejs/9.6.1/firebase-messaging.js')
+importScripts('https://www.gstatic.com/firebasejs/10.1.0/firebase-app-compat.js')
+importScripts('https://www.gstatic.com/firebasejs/10.1.0/firebase-messaging-compat.js')
 
 const firebaseConfig = {
   apiKey: 'AIzaSyDuggWbonjNsi4XZbthGHu49g33KTAnI6c',
@@ -12,14 +12,14 @@ const firebaseConfig = {
 
 firebase.initializeApp(firebaseConfig)
 
-const messaging = firebase.messaging()
+const messaging = firebase.messaging();
 
-messaging.onBackgroundMessage(payload => {
-  const notificationTitle = payload.notification.title
+messaging.onBackgroundMessage((payload) => {
+  const notificationTitle = payload.notification.title;
   const notificationOptions = {
     body: payload.notification.body,
-    icon: '/mascot_notext.png'
-  }
+    icon: '/mascot_notext.png',
+  };
 
-  self.registration.showNotification(notificationTitle, notificationOptions)
-})
+  self.registration.showNotification(notificationTitle, notificationOptions);
+});

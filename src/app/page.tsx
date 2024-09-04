@@ -5,12 +5,14 @@ import Image from 'next/image'; // Import the Image component
 import { v4 as uuidv4 } from 'uuid';
 
 export default function Home() {
+
   const router = useRouter();
 
   const handleStartWebhook = () => {
     const newUuid = uuidv4(); // Generate a new UUID
     router.push(`/view/${newUuid}`); // Redirect to the view page with the new UUID
   };
+
 
   return (
     <main className='flex min-h-[calc(100vh-7rem)] flex-col items-center justify-center text-gray-800 p-4 sm:p-24'>

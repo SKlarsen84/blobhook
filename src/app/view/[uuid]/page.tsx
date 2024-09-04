@@ -18,6 +18,7 @@ import {
 import { getToken } from 'firebase/messaging'
 import { v4 as uuidv4 } from 'uuid'
 
+
 interface RequestData {
   headers: any
   body: any
@@ -37,6 +38,19 @@ const WebhookViewer = () => {
   const [isSubscribed, setIsSubscribed] = useState<boolean>(false)
   const [fcmToken, setFcmToken] = useState<string | null>(null)
 
+
+
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        console.log('Registering service worker')
+        navigator.serviceWorker.register('/firebase-messaging-sw.js')
+      })
+    }
+
+
+ useEffect(() => {
+  console.log('FCM Token:', fcmToken)
+ }, [fcmToken])
   useEffect(() => {
     const pathname = window.location.pathname
     const uuidFromPath = pathname.split('/').pop()
@@ -126,10 +140,15 @@ const WebhookViewer = () => {
 
       // Get FCM token
       try {
-        const token = await getToken(messaging, { vapidKey: process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY })
-        setFcmToken(token)
-        await addDoc(collection(db, 'subscriptions'), { uuid, token })
-        setIsSubscribed(true)
+        console.log(process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY)
+        if (messaging) {
+          const token = await getToken(messaging, { vapidKey: process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY })
+          setFcmToken(token)
+          await addDoc(collection(db, 'subscriptions'), { uuid, token })
+          setIsSubscribed(true)
+        } else {
+          console.error('Messaging is not initialized')
+        }
       } catch (err) {
         console.error('Failed to subscribe:', err)
       }
