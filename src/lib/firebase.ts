@@ -21,16 +21,16 @@ if (typeof window !== 'undefined' && 'serviceWorker' in navigator) {
 
   onMessage(messaging, payload => {
     console.log('Message received. ', payload)
-    // Customize notification here
-    const notificationTitle = payload.notification?.title || 'Notification'
-    const notificationOptions = {
-      body: payload.notification?.body,
-      icon: 'https://www.blobhook.com/_next/image?url=%2Fmascot_notext.png&w=48&q=75'
-    }
+    // // Customize notification here
+    // const notificationTitle = payload.notification?.title || 'Notification'
+    // const notificationOptions = {
+    //   body: payload.notification?.body,
+    //   icon: 'https://www.blobhook.com/_next/image?url=%2Fmascot_notext.png&w=48&q=75'
+    // }
 
-    if (Notification.permission === 'granted') {
-      new Notification(notificationTitle, notificationOptions)
-    }
+    // if (Notification.permission === 'granted') {
+    //   new Notification(notificationTitle, notificationOptions)
+    // }
   })
 }
 
